@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
 
         // Check if the entered password matches the hashed password
         const isPasswordValid = await bcrypt.compare(
-          credentials?.password,
+          credentials!.password,
           user.password
         );
 
@@ -53,9 +53,9 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
-    /* signIn: async ({ account, profile }) => {
+    signIn: async ({ profile }) => {
       await connectDB();
-      console.log("what??");
+
       if (!profile?.email) {
         throw new Error("No profile");
       }
@@ -69,6 +69,6 @@ export const authOptions: NextAuthOptions = {
       );
 
       return true;
-    }, */
+    },
   },
 };

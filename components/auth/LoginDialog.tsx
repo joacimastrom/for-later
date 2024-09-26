@@ -23,13 +23,11 @@ export default function LoginDialog({ openRegister }) {
     });
     if (!res?.ok) {
       toast.error(res?.error);
-    } else {
-      router.push("/assignments");
     }
   };
 
   const googleLogin = async () => {
-    await signIn("google", { callbackUrl: "/assignments" });
+    await signIn("google");
   };
 
   return (
