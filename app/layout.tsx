@@ -1,22 +1,9 @@
 import { Footer } from "@/components/Footer/Footer";
 import Navbar from "@/components/Navbar/Navbar";
-import NextAuthProvider from "@/components/auth/NextAuthProvider";
+import Providers from "@/components/Providers";
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import "./globals.css";
-
-/* const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-}); 
-${geistSans.variable} ${geistMono.variable} 
-*/
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,18 +17,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <NextAuthProvider>
+      <Providers>
         <body
           className={`antialiased m-0 min-h-screen bg-slate-100 flex flex-col`}
         >
           <Navbar />
-          <div className="h-full flex flex-col flex-1 justify-center items-center">
+          <div className="h-full flex flex-col flex-1 p-5 pt-[10vh]">
             {children}
           </div>
           <Footer />
           <Toaster />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 -top-20 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-60"
+          >
+            <div
+              style={{
+                clipPath:
+                  "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+              }}
+              className="relative left-[calc(50%-10rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-36rem)] sm:w-[72.1875rem]"
+            />
+          </div>
         </body>
-      </NextAuthProvider>
+      </Providers>
     </html>
   );
 }

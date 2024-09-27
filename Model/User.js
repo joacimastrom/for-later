@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { SavedData } from "./SavedData";
+import { Item } from "./Item";
 
 const User = mongoose.Schema(
   {
@@ -17,7 +17,7 @@ const User = mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
     },
-    savedData: [SavedData],
+    items: [Item],
   },
   {
     timestamps: true,

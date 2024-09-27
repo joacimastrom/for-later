@@ -61,7 +61,7 @@ export default function RegisterDialog({ openLogin }) {
       <div className="mt-2 text-center">
         <span>Har du redan ett konto?</span>
         <Button variant="link" onClick={openLogin} className="underline px-2">
-          Logga in
+          Sign in
         </Button>
       </div>
     </DialogContent>

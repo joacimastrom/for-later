@@ -37,14 +37,14 @@ export default function LoginDialog({ openRegister }) {
       </DialogHeader>
       <Button onClick={googleLogin} variant="outline">
         <GoogleIcon className="mr-2" />
-        Logga in med Google
+        Sign in with Google
       </Button>
       <div className="flex items-center gap-4">
         <Separator className="flex-1" />
         <span className="text-muted-foreground">Eller</span>
         <Separator className="flex-1" />
       </div>
-      <span className="text-center">Logga in med lösenord</span>
+      <span className="text-center">Sign in with email</span>
       {/* Email/Password Login Form */}
       <form onSubmit={credentialsLogin} className="flex flex-col gap-4">
         <Input
@@ -61,7 +61,7 @@ export default function LoginDialog({ openRegister }) {
           placeholder="Lösenord"
           required
         />
-        <Button type="submit">Logga in</Button>
+        <Button type="submit">Sign in</Button>
       </form>
       <div className="text-center">
         <span>Inget konto?</span>

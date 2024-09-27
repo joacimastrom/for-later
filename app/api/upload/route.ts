@@ -1,31 +1,46 @@
-/* import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { NextResponse } from "next/server";
 
-export const POST = async (request: Request) => {
-  const { fileName, fileType } = await request.json();
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
-  const s3Client = new S3Client({
-    region: process.env.NEXT_PUBLIC_AWS_REGION,
-    //    credentials: {
-    //  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    // },
-  });
+export const GET = async (req) => {
+  const { searchParams } = new URL(req.url);
+
+  // Get query parameters
+  const fileName = searchParams.get("fileName");
+  const fileType = searchParams.get("fileType");
+
+  if (!fileName || !fileType) {
+    return NextResponse.json(
+      { message: "Missing fileName or fileType" },
+      { status: 400 }
+    );
+  }
 
   const params = {
-    Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
     Key: fileName,
     ContentType: fileType,
   };
 
   try {
-    // Create a presigned URL for uploading the file
-    const command = new PutObjectCommand(params);
-    const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 });
+    // Generate presigned URL for PUT (upload) operation
+    const url = await getSignedUrl(s3Client, new PutObjectCommand(params), {
+      expiresIn: 3600,
+    }); // URL valid for 1 hour
 
-    return Response.json(uploadUrl);
+    return NextResponse.json(url);
   } catch (error) {
-    console.error("Error generating pre-signed URL", error);
+    return NextResponse.json(
+      { message: "Failed to generate presigned URL", error: error.message },
+      { status: 500 }
+    );
   }
 };
- */

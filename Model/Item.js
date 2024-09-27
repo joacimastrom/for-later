@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export const SavedData = mongoose.Schema(
+export const Item = mongoose.Schema(
   {
     type: {
       type: String,
@@ -16,4 +16,4 @@ export const SavedData = mongoose.Schema(
   }
 );
 
-export default SavedData;
+export default Item;

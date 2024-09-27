@@ -14,7 +14,7 @@ export const AuthDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Logga in</Button>
+        <Button>Sign in</Button>
       </DialogTrigger>
       {showLogin ? (
         <LoginDialog openRegister={openRegister} />
