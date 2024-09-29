@@ -1,21 +1,20 @@
 "use client";
 
+import { Item as ItemType } from "@/app/types/interface";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Item from "./Item";
 
-type Props = {};
-
-const Items = (props: Props) => {
-  const { data: session, status } = useSession();
+const Items = () => {
+  const { status } = useSession();
 
   // Queries
   const { data: items, isLoading } = useQuery({
     queryKey: ["items"],
     queryFn: async () => {
       const { data } = await axios.get("/api/items");
-      return data as Item[];
+      return data as ItemType[];
     },
     enabled: status === "authenticated",
   });

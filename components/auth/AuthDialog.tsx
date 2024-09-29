@@ -1,6 +1,5 @@
 import { useState } from "react";
 import LoginDialog from "./LoginDialog";
-import RegisterDialog from "./RegisterDialog";
 // components/LoginDialog.js
 import { Button } from "../ui/button";
 import { Dialog, DialogTrigger } from "../ui/dialog";
@@ -16,11 +15,7 @@ export const AuthDialog = () => {
       <DialogTrigger asChild>
         <Button>Sign in</Button>
       </DialogTrigger>
-      {showLogin ? (
-        <LoginDialog openRegister={openRegister} />
-      ) : (
-        <RegisterDialog openLogin={openLogin} />
-      )}
+      <LoginDialog openRegister={openRegister} />
     </Dialog>
   );
 };

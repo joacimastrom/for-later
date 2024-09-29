@@ -6,8 +6,6 @@ import { toast } from "sonner";
 import GoogleIcon from "../icons/Google";
 import { Button } from "../ui/button";
 import { DialogContent, DialogHeader } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
 
 export default function LoginDialog({ openRegister }) {
   const [email, setEmail] = useState("");
@@ -39,40 +37,6 @@ export default function LoginDialog({ openRegister }) {
         <GoogleIcon className="mr-2" />
         Sign in with Google
       </Button>
-      <div className="flex items-center gap-4">
-        <Separator className="flex-1" />
-        <span className="text-muted-foreground">Eller</span>
-        <Separator className="flex-1" />
-      </div>
-      <span className="text-center">Sign in with email</span>
-      {/* Email/Password Login Form */}
-      <form onSubmit={credentialsLogin} className="flex flex-col gap-4">
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Lösenord"
-          required
-        />
-        <Button type="submit">Sign in</Button>
-      </form>
-      <div className="text-center">
-        <span>Inget konto?</span>
-        <Button
-          variant="link"
-          onClick={openRegister}
-          className="underline px-1"
-        >
-          Registrera
-        </Button>
-      </div>
     </DialogContent>
   );
 }
