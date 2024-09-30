@@ -1,15 +1,23 @@
 import mongoose from "mongoose";
 
+const FileSchema = new mongoose.Schema({
+  url: {
+    type: String,
+    required: true,
+  },
+  size: {
+    type: Number,
+    required: true,
+  },
+});
+
 export const Item = mongoose.Schema(
   {
-    type: {
+    text: {
       type: String,
       required: true,
     },
-    data: {
-      type: String,
-      required: true,
-    },
+    files: [FileSchema],
   },
   {
     timestamps: true,

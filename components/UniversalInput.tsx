@@ -57,7 +57,6 @@ const UniversalInput = () => {
     try {
       if (inputData.file) {
         const { name: fileName, type: fileType } = inputData.file;
-        console.log(fileType);
         const { data: uploadUrl } = await axios.get(`/api/upload`, {
           params: { fileName, fileType },
         });
@@ -69,7 +68,7 @@ const UniversalInput = () => {
           uploadUrl,
           { ...inputData.file, fileName: uniqueFilename },
           {
-            headers: { "Content-Type": inputData.file.type },
+            headers: { "Content-Type": fileType },
           }
         );
 

@@ -2,12 +2,18 @@ import { Item as ItemType } from "@/app/types/interface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
-import { Loader2, Trash } from "lucide-react";
+import { Copy, Loader2, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+} from "../ui/card";
 
-const Item = ({ _id, createdAt, data }: ItemType) => {
+const Item = ({ _id, createdAt, text, files }: ItemType) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -42,16 +48,41 @@ const Item = ({ _id, createdAt, data }: ItemType) => {
       <CardHeader className="pt-3 pr-3">
         <CardDescription className="flex justify-between items-center pt-0">
           {format(new Date(createdAt), "MMM dd HH:mm")}
-          <Button variant="ghost">
-            <Trash
-              size={16}
-              strokeWidth={2}
-              onClick={() => mutation.mutate(_id)}
-            />
-          </Button>
+          {text ? (
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                await navigator.clipboard.writeText(text);
+                toast("Copied", {
+                  description: "The item was copied to clipboard.",
+                });
+              }}
+            >
+              <Copy size={16} strokeWidth={2} />
+            </Button>
+          ) : null}
         </CardDescription>
       </CardHeader>
-      <CardContent>{data}</CardContent>
+      <CardContent>
+        {text ? text : null}
+        {files?.map((file) => (
+          <img
+            key={file.url}
+            src={file.url}
+            alt="file"
+            className="object-cover w-full h-48"
+          />
+        ))}
+      </CardContent>
+      <CardFooter className="pr-0 pb-0">
+        <Button
+          variant="ghost"
+          className="ml-auto pb-2"
+          onClick={() => mutation.mutate(_id)}
+        >
+          <Trash size={16} strokeWidth={2} />
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

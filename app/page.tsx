@@ -1,6 +1,6 @@
+import { DropzoneInput } from "@/components/DropzoneInput";
 import Items from "@/components/Items/Items";
 import { MaxWidth } from "@/components/MaxWidth";
-import UniversalInput from "@/components/UniversalInput";
 
 export const Home = () => {
   return (
@@ -8,7 +8,7 @@ export const Home = () => {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center prose">
         Save something for later
       </h1>
-      <UniversalInput />
+      <DropzoneInput />
       <Items />
     </MaxWidth>
   );

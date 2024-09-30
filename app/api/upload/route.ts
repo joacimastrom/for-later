@@ -29,12 +29,13 @@ export const GET = async (req) => {
     Key: fileName,
     ContentType: fileType,
   };
+  console.log(params);
 
   try {
     // Generate presigned URL for PUT (upload) operation
     const url = await getSignedUrl(s3Client, new PutObjectCommand(params), {
-      expiresIn: 3600,
-    }); // URL valid for 1 hour
+      expiresIn: 60,
+    });
 
     return NextResponse.json(url);
   } catch (error) {

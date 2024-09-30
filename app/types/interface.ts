@@ -9,9 +9,15 @@ export enum ItemType {
   FILE = "file",
 }
 
+export type ItemFile = {
+  url: string;
+  size: number;
+};
+
 export type Item = {
   _id: string;
   type: ItemType;
-  data: string;
+  text?: string;
+  files?: ItemFile[];
   createdAt: Date;
 };
