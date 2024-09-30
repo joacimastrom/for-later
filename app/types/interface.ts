@@ -11,7 +11,9 @@ export enum ItemType {
 
 export type ItemFile = {
   url: string;
+  name: string;
   size: number;
+  type: string;
 };
 
 export type Item = {

@@ -17,7 +17,7 @@ import { Separator } from "./ui/separator";
 
 interface InputData {
   text: string;
-  file: File | null;
+  files: File[];
 }
 export const DropzoneInput = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -25,7 +25,7 @@ export const DropzoneInput = () => {
   const [dragging, setDragging] = useState(false);
   const [inputData, setInputData] = useState<InputData>({
     text: "",
-    file: null,
+    files: [],
   });
 
   const queryClient = useQueryClient();
@@ -53,7 +53,7 @@ export const DropzoneInput = () => {
   });
 
   const handleSubmit = async (): Promise<void> => {
-    if (!inputData.text && !inputData.file) {
+    if (!inputData.text && !inputData.files.length) {
       return;
     }
 
@@ -61,20 +61,27 @@ export const DropzoneInput = () => {
     const progressInterval = startSimulatedProgress();
 
     try {
-      if (inputData.file) {
-        await saveFileItem();
-      }
-
-      if (inputData.text) {
+      if (inputData.files.length) {
+        const filePromises = [];
+        for (const file of inputData.files) {
+          filePromises.push(saveFileItem(file));
+        }
+        const files = await Promise.all(filePromises);
+        await mutation.mutate({
+          files,
+        });
+      } else if (inputData.text) {
         await mutation.mutate({
           text: inputData.text,
         });
       }
 
-      setInputData({ text: "", file: null });
       clearInterval(progressInterval);
       setUploadProgress(100);
-      setTimeout(() => setIsUploading(false), 1000);
+      setTimeout(() => {
+        setInputData({ text: "", files: [] });
+        setIsUploading(false);
+      }, 1000);
     } catch {
       toast({
         title: "Something went wrong",
@@ -84,8 +91,7 @@ export const DropzoneInput = () => {
     }
   };
 
-  const saveFileItem = async () => {
-    const file = inputData.file!;
+  const saveFileItem = async (file: File) => {
     const { name: fileName, type: fileType } = file;
 
     const uniqueFilename = `${format(new Date(), "MMM-dd-HH-mm")}-${fileName}`;
@@ -99,14 +105,7 @@ export const DropzoneInput = () => {
 
     const fileUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${uniqueFilename}`;
 
-    await mutation.mutate({
-      files: [
-        {
-          url: fileUrl,
-          size: file.size,
-        },
-      ],
-    });
+    return { url: fileUrl, size: file.size, type: fileType, name: fileName };
   };
 
   const startSimulatedProgress = () => {
@@ -129,34 +128,36 @@ export const DropzoneInput = () => {
     const clipboardData = e.clipboardData;
     e.stopPropagation();
     e.preventDefault();
-    console.log(clipboardData);
-    const pastedFile = clipboardData.files?.[0] || null;
+    const pastedFiles = clipboardData.files?.length || null;
 
-    console.log(pastedFile);
-
-    if (pastedFile) {
-      // If a file is pasted (e.g., image, document)
-      setInputData({ ...inputData, file: pastedFile, text: "" });
+    if (pastedFiles) {
+      setInputData({
+        ...inputData,
+        files: Array.prototype.slice.call(clipboardData.files),
+        text: "",
+      });
     } else {
       const pastedText = clipboardData.getData("Text");
       // If text or URL is pasted
-      setInputData({ ...inputData, text: pastedText, file: null });
+      setInputData({ ...inputData, text: pastedText, files: [] });
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log(e.target.value);
-    setInputData({ text: e.target.value, file: null });
+    setInputData({ text: e.target.value, files: [] });
   };
 
   return (
     <Dropzone
-      multiple={false}
+      multiple={true}
       onDragEnter={() => setDragging(true)}
       onDragLeave={() => setDragging(false)}
-      onDrop={async (acceptedFile: File[]) => {
+      onDrop={async (acceptedFiles: File[]) => {
         setDragging(false);
-        setInputData({ text: "", file: acceptedFile[0] });
+        setInputData((inputData) => ({
+          text: "",
+          files: [...inputData.files, ...acceptedFiles],
+        }));
       }}
     >
       {({ getRootProps, getInputProps }) => (
@@ -187,23 +188,26 @@ export const DropzoneInput = () => {
                     <p className="text-xs text-zinc-500">PDF (up to 4MB)</p>
                   </div>
 
-                  {inputData.file ? (
-                    <div className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200">
+                  {inputData.files.map((file) => (
+                    <div
+                      key={file.name}
+                      className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200"
+                    >
                       <div className="px-3 py-2 h-full grid place-items-center">
                         <File className="h-4 w-4 text-blue-500" />
                       </div>
                       <div className="px-3 py-2 h-full text-sm truncate">
-                        {inputData.file.name}
+                        {file.name}
                       </div>
                     </div>
-                  ) : null}
+                  ))}
 
                   {isUploading ? (
                     <div className="w-full mt-4 max-w-xs mx-auto">
                       <Progress
-                        /*         indicatorColor={
-                      uploadProgress === 100 ? "bg-green-500" : ""
-                    } */
+                        indicatorColor={
+                          uploadProgress === 100 ? "bg-green-500" : ""
+                        }
                         value={uploadProgress}
                         className="h-1 w-full bg-zinc-200"
                       />
@@ -226,7 +230,7 @@ export const DropzoneInput = () => {
               <Input
                 type="text"
                 className="w-full text-center bg-white"
-                value={inputData.file ? "" : inputData.text} // Clear text input if a file is present
+                value={inputData.files.length ? "" : inputData.text} // Clear text input if a file is present
                 onChange={handleChange}
                 onPaste={handlePaste}
                 placeholder="Type or Paste"

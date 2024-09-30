@@ -15,7 +15,7 @@ const Navbar = () => {
   const [firstName, lastName, ...rest] = name?.split(" ") || [];
 
   return (
-    <nav className="sticky top-0 z-10 bg-white/75 backdrop-blur-lg shadow-md">
+    <nav className="sticky top-0 z-10 bg-white/75 backdrop-blur-lg shadow-md px-5 ">
       <MaxWidth className="flex justify-between items-center h-16">
         <Link href="/" className="text-2xl font-bold text-gray-800">
           <Logo />

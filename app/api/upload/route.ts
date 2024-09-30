@@ -29,7 +29,6 @@ export const GET = async (req) => {
     Key: fileName,
     ContentType: fileType,
   };
-  console.log(params);
 
   try {
     // Generate presigned URL for PUT (upload) operation
