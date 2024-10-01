@@ -9,7 +9,7 @@ import axios from "axios";
 import { format } from "date-fns";
 import { Cloud, File } from "lucide-react";
 import { useSession } from "next-auth/react";
-import Dropzone from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
@@ -23,12 +23,20 @@ interface InputData {
 export const DropzoneInput = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [dragging, setDragging] = useState(false);
   const [inputData, setInputData] = useState<InputData>({
     text: "",
     files: [],
   });
   const { toast } = useToast();
+  const { getInputProps, getRootProps, isDragActive, open } = useDropzone({
+    noClick: true,
+    onDrop: async (acceptedFiles: File[]) => {
+      setInputData((inputData) => ({
+        text: "",
+        files: [...inputData.files, ...acceptedFiles],
+      }));
+    },
+  });
 
   const { status } = useSession();
 
@@ -161,108 +169,89 @@ export const DropzoneInput = () => {
   };
 
   return (
-    <Dropzone
-      multiple={true}
-      onDragEnter={() => setDragging(true)}
-      onDragLeave={() => setDragging(false)}
-      onDrop={async (acceptedFiles: File[]) => {
-        setDragging(false);
-        setInputData((inputData) => ({
-          text: "",
-          files: [...inputData.files, ...acceptedFiles],
-        }));
-      }}
+    <Card
+      className="group text-center transition-all data-[dragging=true]:bg-sky-50 data-[dragging=true]:border-sky-500 w-full"
+      data-dragging={isDragActive}
+      {...getRootProps()}
+      onClick={open}
     >
-      {({ getRootProps, getInputProps }) => (
-        <Card
-          className="group text-center transition-all data-[dragging=true]:bg-sky-50 data-[dragging=true]:border-sky-500 w-full"
-          data-dragging={dragging}
-          {...getRootProps()}
+      <CardContent className="px-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+          className="flex flex-col gap-4"
         >
-          <CardContent className="px-4">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-              className="mt-4 flex flex-col gap-4"
+          <div className="flex items-center justify-center h-full w-full">
+            <label
+              htmlFor="dropzone-file"
+              className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer gap-4"
             >
-              <div className="flex items-center justify-center h-full w-full">
-                <label
-                  htmlFor="dropzone-file"
-                  className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer gap-4"
+              <div className="flex flex-col items-center justify-center">
+                <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
+                <p className="mb-2 text-sm text-zinc-700">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-xs text-zinc-500">PDF (up to 4MB)</p>
+              </div>
+
+              {inputData.files.map((file) => (
+                <div
+                  key={file.name}
+                  className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200"
                 >
-                  <div className="flex flex-col items-center justify-center">
-                    <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
-                    <p className="mb-2 text-sm text-zinc-700">
-                      <span className="font-semibold">Click to upload</span> or
-                      drag and drop
-                    </p>
-                    <p className="text-xs text-zinc-500">PDF (up to 4MB)</p>
+                  <div className="px-3 py-2 h-full grid place-items-center">
+                    <File className="h-4 w-4 text-blue-500" />
                   </div>
+                  <div className="px-3 py-2 h-full text-sm truncate">
+                    {file.name}
+                  </div>
+                </div>
+              ))}
 
-                  {inputData.files.map((file) => (
-                    <div
-                      key={file.name}
-                      className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200"
-                    >
-                      <div className="px-3 py-2 h-full grid place-items-center">
-                        <File className="h-4 w-4 text-blue-500" />
-                      </div>
-                      <div className="px-3 py-2 h-full text-sm truncate">
-                        {file.name}
-                      </div>
-                    </div>
-                  ))}
-
-                  {isUploading ? (
-                    <div className="w-full mt-4 max-w-xs mx-auto">
-                      <Progress
-                        indicatorColor={
-                          uploadProgress === 100 ? "bg-green-500" : ""
-                        }
-                        value={uploadProgress}
-                        className="h-1 w-full bg-zinc-200"
-                      />
-                    </div>
-                  ) : null}
-
-                  <input
-                    {...getInputProps()}
-                    type="file"
-                    id="dropzone-file"
-                    className="hidden"
+              {isUploading ? (
+                <div className="w-full mt-4 max-w-xs mx-auto">
+                  <Progress
+                    indicatorColor={
+                      uploadProgress === 100 ? "bg-green-500" : ""
+                    }
+                    value={uploadProgress}
+                    className="h-1 w-full bg-zinc-200"
                   />
-                </label>
-              </div>
-              <div className="flex items-center gap-4">
-                <Separator className="flex-1" />
-                <span className="text-muted-foreground text-zinc-500">or</span>
-                <Separator className="flex-1" />
-              </div>
-              <Input
-                type="text"
-                className="w-full text-center bg-white"
-                value={inputData.files.length ? "" : inputData.text} // Clear text input if a file is present
-                onChange={handleChange}
-                onPaste={handlePaste}
-                placeholder="Type or Paste"
-                onClick={(e) => e.stopPropagation()}
-              />
+                </div>
+              ) : null}
 
-              <Button
-                className="w-full font-bold"
-                type="submit"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                Save!
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-    </Dropzone>
+              <input type="file" {...getInputProps()} />
+            </label>
+          </div>
+          <div className="flex items-center gap-4">
+            <Separator className="flex-1" />
+            <span className="text-muted-foreground text-zinc-500">or</span>
+            <Separator className="flex-1" />
+          </div>
+          <Input
+            type="text"
+            className="w-full text-center bg-white"
+            value={inputData.files.length ? "" : inputData.text} // Clear text input if a file is present
+            onChange={handleChange}
+            onPaste={handlePaste}
+            placeholder="Type or Paste"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          <Button
+            className="w-full font-bold"
+            type="submit"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            Save!
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
