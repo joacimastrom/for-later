@@ -82,7 +82,7 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
           ) : null}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-row grow">
+      <CardContent className="flex flex-col grow justify-between">
         {text ? (
           isValidUrl(text) ? (
             <a
@@ -94,7 +94,9 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
               {text}
             </a>
           ) : (
-            <span className="text-gray-900 line-clamp-3">{text}</span>
+            <span className="text-gray-900 line-clamp-3 break-words">
+              {text}
+            </span>
           )
         ) : null}
         {filesLength ? (

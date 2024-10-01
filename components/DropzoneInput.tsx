@@ -70,7 +70,6 @@ export const DropzoneInput = () => {
     }
 
     if (status !== "authenticated") {
-      console.log("in here");
       toast({
         title: "Login required",
         description: "You need to login before saving items",
@@ -170,7 +169,7 @@ export const DropzoneInput = () => {
 
   return (
     <Card
-      className="group text-center transition-all data-[dragging=true]:bg-sky-50 data-[dragging=true]:border-sky-500 w-full"
+      className="group text-center transition-all data-[dragging=true]:bg-sky-50 data-[dragging=true]:border-sky-500 w-full pt-4 cursor-pointer"
       data-dragging={isDragActive}
       {...getRootProps()}
       onClick={open}
