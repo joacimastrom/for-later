@@ -3,18 +3,10 @@ import { isValidUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
-import { Copy, DownloadCloudIcon, Loader2, Trash } from "lucide-react";
-import Image from "next/image";
+import { Copy, DownloadCloudIcon, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
-
-const fileClasses = [
-  "rotate-0 hover:rotate-[10deg] left-0 ",
-  "rotate-[12deg] hover:rotate-[20deg] left-2",
-  "rotate-[24deg] hover:rotate-[32deg] left-4",
-  "rotate-[36deg] hover:rotate-[44deg] left-6",
-  "rotate-[48deg] hover:rotate-[56deg] left-8",
-];
+import FilePreview from "./FilePreview";
 
 const Item = ({ _id, createdAt, text, files }: ItemType) => {
   const queryClient = useQueryClient();
@@ -60,18 +52,17 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
     }
   };
 
+  if (mutation.isPending) {
+    return null;
+  }
+
   const filesLength = files?.length || 0;
 
   return (
     <Card className="relative flex flex-col">
-      {mutation.isPending && (
-        <div className="absolute inset-0 bg-white/80 flex justify-center items-center z-10">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-        </div>
-      )}
       <CardHeader>
         <CardDescription className="flex justify-between items-center pt-0">
-          {format(new Date(createdAt), "MMM dd HH:mm")}
+          {format(new Date(createdAt), "MMM d HH:mm")}
           {text ? (
             <Copy
               className="hover:scale-110 transition-all cursor-pointer hover:text-zinc-600"
@@ -109,20 +100,7 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
         {filesLength ? (
           <div className="group relative w-full size-16 hover:scale-105 transition-all origin-left">
             {files?.map((file, index) => (
-              <div
-                key={index}
-                className={`absolute ${
-                  fileClasses[filesLength - index - 1]
-                } transition-all size-16 border-white border-2 rounded-lg overflow-hidden origin-bottom-right cursor-pointer shadow-md`}
-              >
-                <Image
-                  src={file.url}
-                  alt="Image 1"
-                  fill
-                  objectFit="cover"
-                  quality={50}
-                />
-              </div>
+              <FilePreview file={file} index={index} key={index} />
             ))}
           </div>
         ) : null}
