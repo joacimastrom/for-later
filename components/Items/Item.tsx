@@ -77,7 +77,7 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
           {filesLength ? (
             <DownloadCloudIcon
               onClick={handleDownloadAll}
-              className="hover:scale-110 transition-all cursor-pointer hover:text-zinc-600"
+              className="hover:scale-110 cursor-pointer hover:text-zinc-600"
             />
           ) : null}
         </CardDescription>
@@ -98,7 +98,7 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
           )
         ) : null}
         {filesLength ? (
-          <div className="group relative w-full size-16 hover:scale-105 transition-all origin-left">
+          <div className="group relative w-full size-16 transition-all origin-left">
             {files?.map((file, index) => (
               <FilePreview file={file} index={index} key={index} />
             ))}

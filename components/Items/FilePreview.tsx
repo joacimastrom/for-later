@@ -20,7 +20,7 @@ const FilePreview = ({ file, index }: Props) => {
   return (
     <div
       key={index}
-      className={`absolute ${fileClasses[index]} transition-all size-16 border-white border-2 rounded-lg overflow-hidden origin-bottom-right cursor-pointer shadow-md`}
+      className={`absolute ${fileClasses[index]} hover:scale-110 transition-all size-16 border-white border-2 rounded-lg overflow-hidden origin-bottom-right cursor-pointer shadow-md`}
     >
       {file.type === "application/pdf" && <FileText size={60} />}
       {/* <Document file={file.url}>
