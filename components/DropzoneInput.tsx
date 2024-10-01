@@ -3,11 +3,12 @@
 import { useState } from "react";
 
 import { Item } from "@/app/types/interface";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
 import { Cloud, File } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Dropzone from "react-dropzone";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -27,6 +28,9 @@ export const DropzoneInput = () => {
     text: "",
     files: [],
   });
+  const { toast } = useToast();
+
+  const { status } = useSession();
 
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -54,6 +58,15 @@ export const DropzoneInput = () => {
 
   const handleSubmit = async (): Promise<void> => {
     if (!inputData.text && !inputData.files.length) {
+      return;
+    }
+
+    if (status !== "authenticated") {
+      console.log("in here");
+      toast({
+        title: "Login required",
+        description: "You need to login before saving items",
+      });
       return;
     }
 

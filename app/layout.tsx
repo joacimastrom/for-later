@@ -1,7 +1,8 @@
 import { Footer } from "@/components/Footer/Footer";
 import Navbar from "@/components/Navbar/Navbar";
 import Providers from "@/components/Providers";
-import { Toaster } from "@/components/ui/sonner";
+
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import "./globals.css";
 

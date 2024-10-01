@@ -3,6 +3,7 @@
 import { Item as ItemType } from "@/app/types/interface";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Item from "./Item";
 
@@ -19,14 +20,14 @@ const Items = () => {
     enabled: status === "authenticated",
   });
 
-  if (isLoading || status == "loading") return null;
-
   if (status == "unauthenticated")
     return (
       <div className="prose prose-slate">
         <p className="lead">Login to see your saved items</p>
       </div>
     );
+  if (isLoading || status == "loading")
+    return <Loader2 className="animate-spin" />;
 
   if (!items?.length) return null;
 
