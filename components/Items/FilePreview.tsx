@@ -1,29 +1,8 @@
 "use client";
 
 import { ItemFile } from "@/app/types/interface";
+import { FileText } from "lucide-react";
 import Image from "next/image";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
-
-// @ts-expect-error This does not exist outside of polyfill which this is doing
-if (typeof Promise.withResolvers === "undefined") {
-  if (window)
-    // @ts-expect-error This does not exist outside of polyfill which this is doing
-    window.Promise.withResolvers = function () {
-      let resolve, reject;
-      const promise = new Promise((res, rej) => {
-        resolve = res;
-        reject = rej;
-      });
-      return { promise, resolve, reject };
-    };
-}
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
 
 const fileClasses = [
   "rotate-0 hover:rotate-[10deg] left-0 z-50",
@@ -43,11 +22,10 @@ const FilePreview = ({ file, index }: Props) => {
       key={index}
       className={`absolute ${fileClasses[index]} transition-all size-16 border-white border-2 rounded-lg overflow-hidden origin-bottom-right cursor-pointer shadow-md`}
     >
-      {file.type === "application/pdf" && (
-        <Document file={file.url}>
+      {file.type === "application/pdf" && <FileText size={60} />}
+      {/* <Document file={file.url}>
           <Page pageNumber={1} width={150} />
-        </Document>
-      )}
+        </Document> */}
       {file.type.startsWith("image/") && (
         <Image
           src={file.url}
