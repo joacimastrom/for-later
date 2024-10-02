@@ -48,4 +48,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
-/* <Button onClick={() => signIn("google")}>Login</Button> */
+/* <Button onClick={() => signIn("google")}>Sign in</Button> */

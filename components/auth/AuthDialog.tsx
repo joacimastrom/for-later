@@ -1,21 +1,21 @@
 import { useState } from "react";
-import LoginDialog from "./LoginDialog";
-// components/LoginDialog.js
+import Sign inDialog from "./Sign inDialog";
+// components/Sign inDialog.js
 import { Button } from "../ui/button";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 
 export const AuthDialog = () => {
-  const [showLogin, setShowLogin] = useState(true);
+  const [showSign in, setShowSign in] = useState(true);
 
-  const openLogin = () => setShowLogin(true);
-  const openRegister = () => setShowLogin(false);
+  const openSign in = () => setShowSign in(true);
+  const openRegister = () => setShowSign in(false);
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button>Sign in</Button>
       </DialogTrigger>
-      <LoginDialog openRegister={openRegister} />
+      <Sign inDialog openRegister={openRegister} />
     </Dialog>
   );
 };

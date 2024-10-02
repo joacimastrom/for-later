@@ -71,8 +71,8 @@ export const DropzoneInput = () => {
 
     if (status !== "authenticated") {
       toast({
-        title: "Login required",
-        description: "You need to login before saving items",
+        title: "Sign in required",
+        description: "You need to Sign in before saving items",
       });
       return;
     }

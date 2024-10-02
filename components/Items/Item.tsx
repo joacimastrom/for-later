@@ -1,15 +1,39 @@
+"use client";
 import { Item as ItemType } from "@/app/types/interface";
 import { isValidUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
 import { Copy, DownloadCloudIcon, Trash } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import FilePreview from "./FilePreview";
+
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 const Item = ({ _id, createdAt, text, files }: ItemType) => {
   const queryClient = useQueryClient();
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const openDialog = (index: number) => {
+    setCurrentIndex(index);
+    setIsOpen(true);
+  };
 
   const mutation = useMutation({
     mutationFn: async (itemId: string) => {
@@ -59,59 +83,90 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
   const filesLength = files?.length || 0;
 
   return (
-    <Card className="relative flex flex-col">
-      <CardHeader>
-        <CardDescription className="flex justify-between items-center pt-0">
-          {format(new Date(createdAt), "MMM d HH:mm")}
+    <>
+      <Card className="relative flex flex-col">
+        <CardHeader>
+          <CardDescription className="flex justify-between items-center pt-0">
+            {format(new Date(createdAt), "MMM d HH:mm")}
+            {text ? (
+              <Copy
+                className="hover:scale-110 transition-all cursor-pointer hover:text-zinc-600"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(text);
+                  toast("Copied", {
+                    description: "The item was copied to clipboard.",
+                  });
+                }}
+              />
+            ) : null}
+            {filesLength ? (
+              <DownloadCloudIcon
+                onClick={handleDownloadAll}
+                className="hover:scale-110 cursor-pointer hover:text-zinc-600"
+              />
+            ) : null}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col grow justify-between">
           {text ? (
-            <Copy
-              className="hover:scale-110 transition-all cursor-pointer hover:text-zinc-600"
-              onClick={async () => {
-                await navigator.clipboard.writeText(text);
-                toast("Copied", {
-                  description: "The item was copied to clipboard.",
-                });
-              }}
-            />
+            isValidUrl(text) ? (
+              <a
+                href={text}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline break-all"
+              >
+                {text}
+              </a>
+            ) : (
+              <span className="text-gray-900 line-clamp-3 break-words">
+                {text}
+              </span>
+            )
           ) : null}
           {filesLength ? (
-            <DownloadCloudIcon
-              onClick={handleDownloadAll}
-              className="hover:scale-110 cursor-pointer hover:text-zinc-600"
-            />
+            <div className="group relative w-full size-16 transition-all origin-left">
+              <Dialog open={isOpen} onOpenChange={(value) => setIsOpen(value)}>
+                <DialogTrigger>
+                  {files?.map((file, index) => (
+                    <FilePreview
+                      file={file}
+                      index={index}
+                      key={index}
+                      onClick={() => openDialog(index)}
+                    />
+                  ))}
+                </DialogTrigger>
+                <DialogContent>
+                  {isOpen && (
+                    <>
+                      <DialogTitle>{files[currentIndex].name}</DialogTitle>
+                      <div className="relative p-4 bg-white rounded-md">
+                        {files[currentIndex].type === "application/pdf" ? (
+                          <Document file={files[currentIndex].url}>
+                            <Page pageNumber={1} width={300} />
+                          </Document>
+                        ) : (
+                          <img
+                            src={files[currentIndex].url}
+                            alt={`Image ${currentIndex}`}
+                            className="w-full h-auto"
+                          />
+                        )}
+                      </div>
+                    </>
+                  )}
+                </DialogContent>
+              </Dialog>
+            </div>
           ) : null}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col grow justify-between">
-        {text ? (
-          isValidUrl(text) ? (
-            <a
-              href={text}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline break-all"
-            >
-              {text}
-            </a>
-          ) : (
-            <span className="text-gray-900 line-clamp-3 break-words">
-              {text}
-            </span>
-          )
-        ) : null}
-        {filesLength ? (
-          <div className="group relative w-full size-16 transition-all origin-left">
-            {files?.map((file, index) => (
-              <FilePreview file={file} index={index} key={index} />
-            ))}
-          </div>
-        ) : null}
-        <Trash
-          onClick={() => mutation.mutate(_id)}
-          className="ml-auto hover:scale-110 transition-all cursor-pointer self-end text-neutral-500 hover:text-zinc-600"
-        />
-      </CardContent>
-    </Card>
+          <Trash
+            onClick={() => mutation.mutate(_id)}
+            className="ml-auto hover:scale-110 transition-all cursor-pointer self-end text-neutral-500 hover:text-zinc-600"
+          />
+        </CardContent>
+      </Card>
+    </>
   );
 };
 

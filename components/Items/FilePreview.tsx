@@ -1,8 +1,15 @@
 "use client";
 
 import { ItemFile } from "@/app/types/interface";
-import { FileText } from "lucide-react";
 import Image from "next/image";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 const fileClasses = [
   "rotate-0 hover:rotate-[10deg] left-0 z-50",
@@ -14,18 +21,21 @@ const fileClasses = [
 type Props = {
   file: ItemFile;
   index: number;
+  onClick: () => void;
 };
 
-const FilePreview = ({ file, index }: Props) => {
+const FilePreview = ({ file, index, onClick }: Props) => {
   return (
     <div
       key={index}
       className={`absolute ${fileClasses[index]} hover:scale-110 transition-all size-16 border-white border-2 rounded-lg overflow-hidden origin-bottom-right cursor-pointer shadow-md`}
     >
-      {file.type === "application/pdf" && <FileText size={60} />}
-      {/* <Document file={file.url}>
+      {file.type === "application/pdf" && (
+        /*  <FileText size={60} /> */
+        <Document file={file.url}>
           <Page pageNumber={1} width={150} />
-        </Document> */}
+        </Document>
+      )}
       {file.type.startsWith("image/") && (
         <Image
           src={file.url}
@@ -34,6 +44,7 @@ const FilePreview = ({ file, index }: Props) => {
           sizes={"64px"}
           objectFit="cover"
           quality={50}
+          onClick={onClick}
         />
       )}
     </div>

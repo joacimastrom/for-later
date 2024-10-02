@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { DialogContent, DialogHeader } from "../ui/dialog";
 import { Input } from "../ui/input";
 
-export default function RegisterDialog({ openLogin }) {
+export default function RegisterDialog({ openSign in }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,7 +60,7 @@ export default function RegisterDialog({ openLogin }) {
 
       <div className="mt-2 text-center">
         <span>Har du redan ett konto?</span>
-        <Button variant="link" onClick={openLogin} className="underline px-2">
+        <Button variant="link" onClick={openSign in} className="underline px-2">
           Sign in
         </Button>
       </div>

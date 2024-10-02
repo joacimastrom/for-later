@@ -23,7 +23,7 @@ const Items = () => {
   if (status == "unauthenticated")
     return (
       <div className="prose prose-slate">
-        <p className="lead">Login to see your saved items</p>
+        <p className="lead">Sign in to see your saved items</p>
       </div>
     );
   if (isLoading || status == "loading")

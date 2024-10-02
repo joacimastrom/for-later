@@ -1,4 +1,4 @@
-// components/LoginDialog.js
+// components/Sign inDialog.js
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -7,12 +7,12 @@ import GoogleIcon from "../icons/Google";
 import { Button } from "../ui/button";
 import { DialogContent, DialogHeader } from "../ui/dialog";
 
-export default function LoginDialog({ openRegister }) {
+export default function Sign inDialog({ openRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const credentialsLogin = async (e) => {
+  const credentialsSign in = async (e) => {
     e.preventDefault();
     const res = await signIn("credentials", {
       redirect: false,
@@ -24,7 +24,7 @@ export default function LoginDialog({ openRegister }) {
     }
   };
 
-  const googleLogin = async () => {
+  const googleSign in = async () => {
     await signIn("google");
   };
 
@@ -33,7 +33,7 @@ export default function LoginDialog({ openRegister }) {
       <DialogHeader>
         <h3 className="text-xl font-semibold">Logga in</h3>
       </DialogHeader>
-      <Button onClick={googleLogin} variant="outline">
+      <Button onClick={googleSign in} variant="outline">
         <GoogleIcon className="mr-2" />
         Sign in with Google
       </Button>
