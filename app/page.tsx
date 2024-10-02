@@ -29,9 +29,14 @@ if (typeof Promise.withResolvers === "undefined") {
 const Home = () => {
   return (
     <MaxWidth className="flex flex-col gap-2 md:gap-4 items-center w-full">
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center prose">
-        Save stuff for later
-      </h1>
+      <div className="prose prose-slate text-center">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl m-0">
+          Save stuff for later
+        </h1>
+        <p className="lead mt-0">
+          Access your saved items from anywhere on any device
+        </p>
+      </div>
       <DropzoneInput />
       <Items />
     </MaxWidth>
