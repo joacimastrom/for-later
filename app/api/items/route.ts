@@ -12,9 +12,9 @@ export const GET = async () => {
     });
   }
 
-  const user = await User.findById(session.user.id);
+  const user = await User.findById(session.user.id).select("items").lean();
 
-  return NextResponse.json(user.items);
+  return NextResponse.json(user.items.reverse());
 };
 
 export const POST = async (request: Request) => {
@@ -33,6 +33,8 @@ export const POST = async (request: Request) => {
     { _id: session.user.id },
     { $push: { items: body } },
     { new: true }
-  );
-  return Response.json(user.items);
+  )
+    .select("items")
+    .lean();
+  return Response.json(user.items.reverse());
 };

@@ -25,7 +25,7 @@ export const DELETE = async (
       { _id: userId },
       { $pull: { items: { _id: params.id } } },
       { new: true, projection: { items: 1 } }
-    );
+    ).lean();
 
     // Check if the update succeeded and the item was removed
     if (!updatedUser) {
@@ -36,7 +36,10 @@ export const DELETE = async (
     }
 
     return NextResponse.json(
-      { message: "Item deleted successfully", items: updatedUser.items },
+      {
+        message: "Item deleted successfully",
+        items: updatedUser.items.reverse(),
+      },
       { status: 200 }
     );
   } catch (error) {
