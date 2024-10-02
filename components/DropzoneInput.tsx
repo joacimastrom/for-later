@@ -189,11 +189,11 @@ export const DropzoneInput = () => {
             >
               <div className="flex flex-col items-center justify-center">
                 <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
-                <p className="mb-2 text-sm text-zinc-700">
+                <p className="text-sm text-zinc-700">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-zinc-500">PDF (up to 4MB)</p>
+                {/* <p className="text-xs text-zinc-500">Up to 5 files</p> */}
               </div>
 
               {inputData.files.map((file) => (
