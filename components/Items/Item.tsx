@@ -20,12 +20,16 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 
+import Image from "next/image";
+import { useResizeDetector } from "react-resize-detector";
+
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const Item = ({ _id, createdAt, text, files }: ItemType) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { width, ref } = useResizeDetector();
 
   const openDialog = (index: number) => {
     setCurrentIndex(index);
@@ -138,16 +142,24 @@ const Item = ({ _id, createdAt, text, files }: ItemType) => {
                   {isOpen && (
                     <>
                       <DialogTitle>{files[currentIndex].name}</DialogTitle>
-                      <div className="relative p-4 bg-white rounded-md">
+                      <div
+                        className="relative p-4 bg-white rounded-md max-h-[80vh] max-w-lg"
+                        ref={ref}
+                      >
                         {files[currentIndex].type === "application/pdf" ? (
-                          <Document file={files[currentIndex].url}>
-                            <Page pageNumber={1} width={300} />
+                          <Document
+                            file={files[currentIndex].url}
+                            className="[&canvas]:w-full &canvas]:h-auto"
+                          >
+                            <Page pageNumber={1} width={width} />
                           </Document>
                         ) : (
-                          <img
+                          <Image
                             src={files[currentIndex].url}
                             alt={`Image ${currentIndex}`}
-                            className="w-full h-auto"
+                            width={800}
+                            height={600}
+                            className="object-contain max-w-full max-h-full"
                           />
                         )}
                       </div>

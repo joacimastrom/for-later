@@ -33,9 +33,7 @@ const Home = () => {
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl m-0">
           Save stuff for later
         </h1>
-        <p className="lead mt-0">
-          Access your saved items from anywhere on any device
-        </p>
+        <p className="lead mt-0">Access your saved items from any device</p>
       </div>
       <DropzoneInput />
       <Items />

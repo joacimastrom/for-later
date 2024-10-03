@@ -20,6 +20,12 @@ interface InputData {
   text: string;
   files: File[];
 }
+
+const MAX_SIZE_MB = 5;
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+const ALLOWED_NUMBER_OF_FILES = 5;
+
 export const DropzoneInput = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -31,6 +37,27 @@ export const DropzoneInput = () => {
   const { getInputProps, getRootProps, isDragActive, open } = useDropzone({
     noClick: true,
     onDrop: async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > ALLOWED_NUMBER_OF_FILES) {
+        toast({
+          title: "Too many files",
+          description: `You can only upload up to ${ALLOWED_NUMBER_OF_FILES} files`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const filesWithinSizeLimit = acceptedFiles.filter(
+        ({ size }) => size <= MAX_SIZE_BYTES
+      );
+
+      if (filesWithinSizeLimit.length !== acceptedFiles.length) {
+        toast({
+          title: "File size limit exceeded",
+          description: `Files must be less than ${MAX_SIZE_MB}MB`,
+          variant: "destructive",
+        });
+      }
+
       setInputData((inputData) => ({
         text: "",
         files: [...inputData.files, ...acceptedFiles],

@@ -9,6 +9,8 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
 });
+const MAX_SIZE_MB = 5;
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
 export const GET = async (req) => {
   const { searchParams } = new URL(req.url);
@@ -28,6 +30,7 @@ export const GET = async (req) => {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     Key: fileName,
     ContentType: fileType,
+    Conditions: [["content-length-range", 0, MAX_SIZE_BYTES]],
   };
 
   try {
